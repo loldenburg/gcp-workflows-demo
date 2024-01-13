@@ -1,4 +1,8 @@
-# "FTP to GCS and Go"
+# GCP Workflows Demo
+
+by Lukas Oldenburg, dim28.ch. Part of the Analytics Pioneers demo session in January-February 2024.
+Accompanying slides are at https://docs.google.com/presentation/d/11sxK1XKof-yF7wjrN5VFRlk5GBTr9NgFaSdINvjDH1Y (ask for
+access if you can't see them).
 
 ## Run the GCP Labs example
 
