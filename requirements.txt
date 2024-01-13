@@ -1,0 +1,6 @@
+flask==2.3.3 # on purpose <3.0.0 because functions-framework does not support 3.0.0 yet
+functions-framework==3.4.0
+google-auth==2.26.2
+google-cloud-storage==2.14.0
+google-cloud-secret-manager==2.17.0
+python-dateutil==2.8.2

@@ -1,0 +1,28 @@
+steps:
+  - name: 'google/cloud-sdk:slim'
+    id: 'Deploy Generic Analytical Scripts Cloud Function'
+    entrypoint: 'gcloud'
+    waitFor:
+      - '-'
+    args: [
+      'functions', 'deploy', '${_SERVICE_NAME}',
+      '--runtime', 'python312',
+      '--trigger-topic', 'analytical-scripts',
+      '--entry-point', '${_ENTRY_POINT}',
+      '--timeout', '540s',
+      '--memory', '8GB',
+      '--region', '${_REGION}',
+      '--set-env-vars', 'GCP_REGION=${_REGION},GCP_PROJECT=${PROJECT_ID}',
+      #'--service-account', '${_SERVICE_ACCOUNT}',
+      '--project', '${PROJECT_ID}',
+      '--max-instances', '10'
+    ]
+timeout: 1200s
+substitutions:
+  _SERVICE_NAME: "analytical-scripts"
+  _REGION: "europe-west6"
+  _ENTRY_POINT: "main_handler"
+  #_SERVICE_ACCOUNT: "12346789-compute@developer.gserviceaccount.com"  # todo change to the actually intended account
+
+options:
+  logging: 'CLOUD_LOGGING_ONLY'
