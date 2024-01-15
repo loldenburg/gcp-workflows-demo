@@ -6,7 +6,7 @@ access if you can't see them).
 
 ## Run the GCP Labs example
 
-See gcp-labs-example.md
+See gcp-s-example.md
 
 In the project we just created for the GCP Labs example, we will do the following steps:
 

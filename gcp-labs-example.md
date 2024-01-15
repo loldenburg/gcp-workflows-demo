@@ -64,11 +64,18 @@ gcloud functions deploy randomgen \
     --allow-unauthenticated
 ```
 
-Once the function is deployed, you can see the URL of the function under httpsTrigger.url property displayed in the console (=> Menu: Cloud Functions) or in the shell via `gcloud functions describe randomgen`
+Once the function is deployed, you can see the URL of the function under httpsTrigger.url property displayed in the
+console (=> Menu: Cloud Functions) or in the shell via
+
+```bash
+gcloud functions describe randomgen
+```
 
 You can also visit that URL of the function (=run the function) with the following curl command:
 
-`curl $(gcloud functions describe randomgen --format='value(httpsTrigger.url)')`
+```bash
+curl $(gcloud functions describe randomgen --format='value(httpsTrigger.url)')
+```
 
 The first function is ready for the workflow.
 
@@ -103,7 +110,8 @@ flask<3.0.0 # functions-framework does not support Flask 3.0.0 yet
 ```
 
 Deploy the function with an HTTP trigger and with unauthenticated requests allowed with this command:
-```
+
+```bash
 gcloud functions deploy multiply \
     --runtime python312 \
     --trigger-http \
@@ -152,14 +160,21 @@ If `us-central1` is not your default region, replace it with your region.
 
 Deploy the first workflow:
 
-`gcloud workflows deploy workflow --source=workflow.yaml`
+```bash
+gcloud workflows deploy workflow --source=workflow.yaml
+```
 
 Execute the first workflow:
 
-`gcloud workflows execute workflow`
+```bash
+gcloud workflows execute workflow
+```
+
 Once the workflow is executed, you can see the result by passing in the execution id given in the previous step:
 
-`gcloud workflows executions describe <your-execution-id> --workflow workflow`
+```bash
+gcloud workflows executions describe <your-execution-id> --workflow workflow
+```
 
 The output will include result and state:
 
@@ -175,7 +190,8 @@ Next, you will connect math.js as an external service in the workflow.
 
 In math.js, you can evaluate mathematical expressions like this:
 
-`curl https://api.mathjs.org/v4/?'expr=log(56)`
+https://api.mathjs.org/v4/?expr=log(56)
+
 
 This time, you will use Cloud Console to update our workflow. Search for "Workflows" in Google Cloud Console and navigate to the Workflows page. Click on the workflow you created in the previous step, then Source -> Edit.
 
@@ -225,7 +241,7 @@ mkdir ~/floor
 cd ~/floor
 ```
 
-Create a app.py file in the directory with the following contents:
+Create an app.py file in the directory with the following contents:
 
 ```python
 import json
@@ -293,6 +309,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --no-allow-unauthenticated
 ```
 
+Make sure to **copy the Service URL**, e.g. Service URL: https://floor-55xvrbnnwa-uc.a.run.app
 Once deployed, the service is ready for the workflow.
 
 ## Connect the Cloud Run service
@@ -317,9 +334,10 @@ gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} \
     --role "roles/logging.logWriter"
 ```
 
-Update, the workflow definition in workflow.yaml to include the Cloud Run service. Notice how you are also including an auth field to make sure Workflows passes in the authentication token in its calls to the Cloud Run service:
+Update the workflow definition in workflow.yaml to include the Cloud Run service. Notice how you are also including an
+auth field to make sure Workflows passes in the authentication token in its calls to the Cloud Run service:
 
-Make sure you replace the url values with the actual urls of your functions with the right region and project id
+Make sure you replace the url values with the actual urls of your functions as well as the Cloud Run Service URL.
 
 ```yaml
 - randomgenFunction:
@@ -349,7 +367,7 @@ Make sure you replace the url values with the actual urls of your functions with
 - floorFunction:
     call: http.post
     args:
-        url: https://floor-55xvrbnnwa-uc.a.run.app
+      url: https://floor-55xvrbnnwa-uc.a.run.app # replace by your actual Cloud Run Service URL
         auth:
             type: OIDC
         body:
@@ -368,13 +386,15 @@ gcloud workflows deploy workflow \
 ```
 Execute the workflow:
 
-`gcloud workflows execute workflow`
+```bash
+gcloud workflows execute workflow
+```
 
 In a few seconds, you can take a look at the workflow execution to see the result:
 
-
 gcloud workflows executions describe <your-execution-id> --workflow workflow
 The output will include an integer result and state like:
+
 ```txt
 result: '{"body":"5","code":200 ... } 
 ```
