@@ -14,30 +14,27 @@ In the project we just created for the GCP Labs example, we will do the followin
 
 ### Create a Cloud Storage Bucket
 
-Name: "private-disposable-1m"
-Choose europe-west6 (Zürich) as location
-Lifecycle policy (after creation): 1 month
+- Name: `{{project-id}}-private-disposable-1m`
+- Choose europe-west6 (Zürich) as location
+- Lifecycle policy (after creation): 1 month
 
 ### Create a Secret Manager Secret "ftp_passwd"
 
-Enable Secret Mgr API and store "ftp_passwd" in Secret Manager.
-Secret Content: see ftp_login.txt in root of this repo.
+- Enable Secret Mgr API
+- Create a Secret called `my_test_ftp` in Secret Manager.
+- Secret Content: A JSON with the FTP credentials in the following syntax, example:
+  `{"address":"myftp.mydomain.com","user":"myusername","passwd":"mypassword","ftp_folder":"/"}`
+  (Note to Lukas: see git-ignored ftp_login.txt in root of this repo)
 
 ### Do some Code Changes:
 
-In cfg:
+In `gcf_src/config/cfg.py`:
 
 ```
 GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-project") # todo change to actual project ID
 ```
 
-In cloudbuild.yaml:
-
-```
-  _SERVICE_ACCOUNT: "xxxxx-compute@developer.gserviceaccount.com"  # todo change to the actually intended account 
-```
-
-### Create Cloud Function via Cloud Build Trigger
+### Create Cloud Function via Cloud Build
 
 Create a Cloud Function via Cloud Build (cloudbuild.yaml) and deploy it to Cloud Run.
 Cloud Build -> Settings -> Enable permissions:
@@ -49,9 +46,18 @@ Cloud Build -> Settings -> Enable permissions:
 #### Build via Cloud Build:
 
 ```bash
-gcloud set project !!THEPROJECTID!!
+gcloud set project !!THEPROJECTID!! # switch to your project
+```
+
+Classic command:
+
+```bash
 gcloud builds submit --config cloudbuild.yaml
-# or: With logs and gcloud beta components installed:
+```
+
+Or: With logs and gcloud beta components installed:
+
+```bash
 gcloud beta builds submit --config cloudbuild.yaml
 ```
 
@@ -62,7 +68,7 @@ gcloud beta builds submit --config cloudbuild.yaml
 - Workflow Editor Source Code -> copy from `workflows/workflow.yaml`
 - To speed up the demo, we use the default service account. We need to give it **"Secret Manager Secret Accessor"
   permission** under IAM & Admin.
-- Test the workflow with this payload:
+- Test the workflow with this payload (this will of course fail because you don't have access to my FTP server):
 
 ```json
 {
@@ -73,7 +79,8 @@ gcloud beta builds submit --config cloudbuild.yaml
     "keep_file_on_ftp": true,
     "source_file_name_re": "fragestellung",
     "source_folder": "/gcp-workflows/",
-    "source_ftp": "my_test_ftp"
+    "source_ftp": "my_test_ftp",
+    "gcs_bucket": "{{YOUR_PROJECT_ID}}-private-disposable-1m"
   }
 }
 ```

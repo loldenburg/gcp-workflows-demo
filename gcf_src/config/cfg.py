@@ -5,8 +5,8 @@ from google.cloud import secretmanager
 
 WORKFLOW_CALLBACK_URL = 'undefined'
 SCRIPT = 'undefined'
-GCS_DEFAULT_BUCKET = environ.get("GCS_DEFAULT_BUCKET", "private-disposable-1m")
-GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-12-16")  # todo change to actual project ID to enable local runs
+GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-01-15")  # todo change to actual project ID to enable local runs
+GCS_DEFAULT_BUCKET = environ.get("GCS_DEFAULT_BUCKET", f"{GCP_PROJECT}-private-disposable-1m")
 
 
 def reset_cfg_vars():
@@ -26,8 +26,9 @@ def secret_mgr_get_secret(secret_id: str):
     return decoded
 
 
+# FTP servers. You can add others in the same manner:
 def my_test_ftp():
-    login_info = loads(secret_mgr_get_secret("ftp_login_info"))
+    login_info = loads(secret_mgr_get_secret("my_test_ftp"))
     my_test_ftp.address = login_info["address"]
     my_test_ftp.user = login_info["user"]
     my_test_ftp.passwd = login_info["passwd"]
