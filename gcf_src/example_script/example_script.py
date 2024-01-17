@@ -1,6 +1,5 @@
 def run_script(**kwargs):
     print("Hello Dr. Stade!")
-    a = hundi
     return {"result": "done", "workflow_instructions": {"instruction1": "do-this-next-please"}}
 
 

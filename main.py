@@ -33,7 +33,7 @@ if __name__ == "__main__":
     _payload = {'script': 'example_script',
                 'workflow_callback_url': "https://www.google.com/your-workflow-callback-url"}
     data = dumps(_payload).encode('utf-8')
-    context = Context(eventId="12456646", timestamp="irrelevant", eventType="test", resource="none")
+    _context = Context(eventId="12456646", timestamp="irrelevant", eventType="test", resource="none")
 
-    response = main_handler({"data": base64.b64encode(data)}, context)
+    response = main_handler({"data": base64.b64encode(data)}, _context)
     print(response)

@@ -46,7 +46,7 @@ def run(event_payload):
     except Exception as e:
         print(f"Error in script_runner: {e}")
         try:
-            workflow_callback_after_run(workflow_callback_payload=script_result)
+            workflow_callback_after_run(workflow_callback_payload={"result": script_result})
         except Exception as exc:
             # if even this fails... we are in trouble
             cfg.reset_cfg_vars()  # reset cfg vars so they do not persist into the next run
