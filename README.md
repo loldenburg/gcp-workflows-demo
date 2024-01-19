@@ -77,7 +77,7 @@ gcloud beta builds submit --config cloudbuild.yaml
       "__test"
     ],
     "keep_file_on_ftp": true,
-    "source_file_name_re": "fragestellung",
+    "source_file_name_re": "^frag.*tellung",
     "source_folder": "/gcp-workflows/",
     "source_ftp": "my_test_ftp",
     "gcs_bucket": "{{YOUR_PROJECT_ID}}-private-disposable-1m"

@@ -79,7 +79,7 @@ def workflow_callback_after_run(workflow_callback_payload: dict = None):
 
 if __name__ == '__main__':
     # test callback URL here
-    url = "https://workflowexecutions.googleapis.com/v1/projects/911510791320/locations/etc."
+    url = "https://workflowexecutions.googleapis.com/v1/projects/50418753810/locations/europe-west6/workflows/ftp_to_gcs/executions/5777f9ae-821a-4362-88a7-d2e06be319a4/callbacks/ff90ce49-373f-4c05-8bc2-e3983654c3ad_08badb84-0f0a-4fb6-897f-ac621e7a9c6a"
     response = trigger_workflow_callback(workflow_callback_url=url, request_type="POST",
                                          data={"result": "error", "result_detail": "some message"})
     print("done")

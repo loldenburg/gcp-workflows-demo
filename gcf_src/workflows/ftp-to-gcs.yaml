@@ -12,7 +12,7 @@ main:
           - attempt: 1 # workflow will restart itself up to {max_attempts} attempts
           - max_attempts: ${default(map.get(input, "max_attempts"), 3)}
           - import_script_name: "ftp_to_gcs" # identifies the script to be run by the cloud function we will trigger
-          - next_pubsub_payloads: ${default(map.get(input, "next_pubsub_payloads"), null)} # list of next pubsub payloads to trigger - OPTIONAL, defaults to null => workflow will end after import
+          - next_pubsub_payloads: ${default(map.get(input, "next_pubsub_payloads"), null)} # list of objects with next pubsub payloads to trigger - OPTIONAL, defaults to null => workflow will end after import
           - import_cfg: ${input["import_cfg"]} # import config - MANDATORY
     - set_fallback_cfg_vars:
         assign: # if variables are not provided in the input payload, we will use these fallback values:
@@ -35,11 +35,7 @@ main:
     - retry_or_exit_loop:
         switch:
           - condition: ${attempt > max_attempts}
-            steps:
-              - raise_max_attempts_reached_error:
-                  raise: ${"Workflow error - Max attempts reached, exiting workflow"}
-              - return_retry_error:
-                  return: ${"Max attempts reached, exiting workflow"}
+            raise: ${"Workflow error - Max attempts of " + max_attempts + " reached, exiting workflow"}
     - log_enriched_payload:
         call: sys.log
         args:
@@ -66,17 +62,17 @@ main:
     - log_callback_result:
         call: sys.log
         args:
-          severity: "INFO"
+          severity: "DEBUG"
           text: ${"Callback result is " + json.encode_to_string(callback_result)}
-    - set_callback_result_to_http_body:
+    - set_callback_payload_to_http_body:
         switch: # if the callback result is from an actual http request body, and not just a timeout error, we will use the body as the callback response
           - condition: ${default(map.get(callback_result, "http_request"), null) != null}
             assign:
               - callback_payload: ${default(map.get(callback_result.http_request, "body"), null)}
               - workflow_instructions: ${default(map.get(callback_payload, "workflow_instructions"), null)}
-    - decide_next_step_based_on_response:
+    - decide_next_step_based_on_callback_payload:
         switch:
-          # if callback payload has a "error" property, it failed => we will retry if we haven't reached max_attempts yet:
+          # if callback payload contains a "result" property with value = "error", it failed => we will retry if we haven't reached max_attempts yet:
           - condition: ${callback_payload["result"] == "error"}
             next: increment_and_loop_again
           # successfully completed import:
@@ -107,11 +103,6 @@ main:
                     value: next_pubsub_payload
                     in: ${next_pubsub_payloads}
                     steps:
-                      - add_gcs_locations_to_next_pubsub_payload:
-                          switch:
-                            - condition: ${default(map.get(workflow_instructions, "gcs_locations"), null) != null}
-                              assign:
-                                - next_pubsub_payload["gcs_locations"]: ${workflow_instructions["gcs_locations"]}
                       - log_next_pubsub_payload:
                           call: sys.log
                           args:
@@ -136,11 +127,6 @@ main:
 pubsub_publisher:
   params: [ msg, callback_url, topic ]
   steps:
-    - log_raw_msg:
-        call: sys.log
-        args:
-          severity: "INFO"
-          text: ${"Raw Pubsub message is " + json.encode_to_string(msg)}
     - enrich_msg:
         assign:
           - msg["workflow_callback_url"]: ${callback_url} # add the callback URL to the message
@@ -148,11 +134,11 @@ pubsub_publisher:
           - topic: ${topic}
           - message: ${json.encode(msg)}
           - base64Msg: ${base64.encode(message)}
-    - log_message_to_pubsub:
+    - log_pubsub_message:
         call: sys.log
         args:
           severity: "INFO"
-          text: ${"Publishing Pub/Sub message " + json.encode_to_string(msg) +" to topic " + topic + " in project " + project}
+          text: ${"Publishing Pub/Sub message " + json.encode_to_string(msg) + " to topic " + topic + " in project " + project}
     - publish_message_to_pubsub:
         call: googleapis.pubsub.v1.projects.topics.publish
         args:
