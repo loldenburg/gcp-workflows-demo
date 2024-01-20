@@ -343,7 +343,7 @@ Make sure you replace the url values with the actual urls of your functions as w
 - randomgenFunction:
     call: http.get
     args:
-        url: https://us-central1-workflow-demo-12-16.cloudfunctions.net/randomgen # instead of us-central1-workflow-demo-12-16, use your {region-projectID}  
+      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}  
     result: randomgenResult
 - logRandomgenResult:
     call: sys.log
@@ -353,7 +353,7 @@ Make sure you replace the url values with the actual urls of your functions as w
 - multiplyFunction:
     call: http.post
     args:
-        url: https://us-central1-workflow-demo-12-16.cloudfunctions.net/multiply # instead of us-central1-workflow-demo-12-16, use your {region-projectID}
+      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
         body:
             input: ${randomgenResult.body.random}
     result: multiplyResult
