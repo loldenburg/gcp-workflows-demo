@@ -11,9 +11,9 @@ main:
         assign:
           - attempt: 1 # workflow will restart itself up to {max_attempts} attempts
           - max_attempts: ${default(map.get(input, "max_attempts"), 3)}
-          - import_script_name: "ftp_to_gcs" # identifies the script to be run by the cloud function we will trigger
           - next_pubsub_payloads: ${default(map.get(input, "next_pubsub_payloads"), null)} # list of objects with next pubsub payloads to trigger - OPTIONAL, defaults to null => workflow will end after import
           - import_cfg: ${input["import_cfg"]} # import config - MANDATORY
+          - import_cfg["script"]: "ftp_to_gcs" # identifies the script to be run by the cloud function we will trigger
     - set_fallback_cfg_vars:
         assign: # if variables are not provided in the input payload, we will use these fallback values:
           - fallback_cfg: # this is the payload we will send to the cloud function via the Pubsub message
@@ -23,15 +23,14 @@ main:
               gcs_bucket: ${default(map.get(import_cfg, "gcs_bucket"), null)}  # GCS bucket to import to - OPTIONAL, defaults to default bucket in Cloud Function
               gcs_file_name: ${default(map.get(import_cfg, "gcs_file_name"), null)} # GCS file name to import to (eg. "prods_20230909-100000.txt") - OPTIONAL, defaults to source file name
               gcs_folders: ${default(map.get(import_cfg, "gcs_folders"), null)} # list GCS folder(s) to import to (eg. ["product-classifications-as-from-export-tool"]) - MANDATORY
-              script: ${import_script_name} # identifies the script to be run by the cloud function we will trigger
               source_file_name: ${default(map.get(import_cfg, "source_file_name"), null)} # for single-file import mandatory if source_file_name_re is not provided
               source_file_name_re: ${default(map.get(import_cfg, "source_file_name_re"), null)} # regex, will do the import for multiple files, mandatory if source_file_name is not provided
               source_folder: ${default(map.get(import_cfg, "source_folder"), "/")} # FTP folder to import from (eg. "outgoing") - OPTIONAL, defaults to FTP's default folder
-              keep_file_on_ftp: ${default(map.get(import_cfg, "keep_file_on_ftp"), true)} # if false, will delete the file(s) after import - OPTIONAL, defaults to false
+              keep_file_on_ftp: ${default(map.get(import_cfg, "keep_file_on_ftp"), false)} # if false, will delete the file(s) after import - OPTIONAL, defaults to false
               add_fin_file: ${default(map.get(import_cfg, "add_fin_file"), false)} # if true, will add a .fin file after import - OPTIONAL, defaults to false
     - merge_fallback_cfg_into_import_cfg:
         assign:
-          - import_cfg: ${map.merge(input["import_cfg"], fallback_cfg)}
+          - import_cfg: ${map.merge(import_cfg, fallback_cfg)}
     - retry_or_exit_loop:
         switch:
           - condition: ${attempt > max_attempts}
@@ -92,28 +91,26 @@ main:
           - wait_before_retry:
               call: sys.sleep
               args:
-                seconds: 30
+                seconds: 5
               next: retry_or_exit_loop
     - trigger_next_pubsub_message:
         switch:
           - condition: ${next_pubsub_payloads != null}
-            steps:
-              - loop_over_next_pubsub_payloads:
-                  for:
-                    value: next_pubsub_payload
-                    in: ${next_pubsub_payloads}
-                    steps:
-                      - log_next_pubsub_payload:
-                          call: sys.log
-                          args:
-                            severity: "INFO"
-                            text: ${"Import from FTP to GCS was successful. Triggering next Pub/Sub message with payload " + json.encode_to_string(next_pubsub_payload)}
-                      - trigger_pubsub:
-                          call: pubsub_publisher
-                          args:
-                            msg: ${next_pubsub_payload}
-                            callback_url: null # we don't want to wait for a callback anymore
-                            topic: "analytical-scripts"
+            for:
+              value: next_pubsub_payload
+              in: ${next_pubsub_payloads}
+              steps:
+                - log_next_pubsub_payload:
+                    call: sys.log
+                    args:
+                      severity: "INFO"
+                      text: ${"Import from FTP to GCS was successful. Triggering next Pub/Sub message with payload " + json.encode_to_string(next_pubsub_payload)}
+                - trigger_pubsub:
+                    call: pubsub_publisher
+                    args:
+                      msg: ${next_pubsub_payload}
+                      callback_url: null # we don't want to wait for a callback anymore
+                      topic: "analytical-scripts"
     - exit_workflow:
         steps:
           - create_exit_data:
@@ -131,7 +128,6 @@ pubsub_publisher:
         assign:
           - msg["workflow_callback_url"]: ${callback_url} # add the callback URL to the message
           - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
-          - topic: ${topic}
           - message: ${json.encode(msg)}
           - base64Msg: ${base64.encode(message)}
     - log_pubsub_message:
@@ -152,9 +148,6 @@ pubsub_publisher:
         args:
           severity: "INFO"
           text: ${"Publish result is " + json.encode_to_string(publish_result)}
-    - return_result:
-        return: ${publish_result}
-
 
 
 callback_handler:
@@ -180,7 +173,7 @@ callback_handler:
                 args:
                   severity: "WARNING"
                   text: ${"Error during attempt " + attempt + " while waiting for callback - " + e.message}
-            - increment_attempts:
+            - fake_callback_result:
                 assign: # create fake callback response with error message
                   - callback_result:
                       result: "error"

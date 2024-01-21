@@ -94,9 +94,9 @@ gcloud beta builds submit --config cloudbuild.yaml
     "keep_file_on_ftp": true,
     "source_file_name_re": "^frag.*tellung",
     "source_folder": "/gcp-workflows/",
-    "source_ftp": "my_test_ftp"
-  },
-  "timeout": 10
+    "source_ftp": "my_test_ftp",
+    "callback_timeout": 10,
+  }
 }
 ```
 

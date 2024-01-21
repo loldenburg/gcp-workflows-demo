@@ -32,12 +32,12 @@ if __name__ == "__main__":
 
     _payload = {'script': 'example_script',
                 'workflow_callback_url': "https://www.google.com/your-workflow-callback-url"}
-    # _payload = {'add_fin_file': False, 'callback_timeout': 550, 'encoding': 'utf-8', 'ftp_timeout': None,
-    #            'gcs_bucket': 'workflow-demo-01-15-private-disposable-1m', 'gcs_file_name': None,
-    #            'gcs_folders': ['__test'], 'keep_file_on_ftp': True, 'script': 'ftp_to_gcs', 'source_file_name': None,
-    #            'source_file_name_re': '^fragestellung', 'source_folder': '/gcp-workflows/',
-    #            'source_ftp': 'my_test_ftp',
-    #            'workflow_callback_url': 'https://workflowexecutions.googleapis.com/v1/projects/50418753810/locations/europe-west6/workflows/ftp_to_gcs/executions/e1537ee9-9d70-4f1e-bc3e-4a9d15b02787/callbacks/f133d9d2-911f-4348-9ced-bbedb83f2e40_667c6bf6-c419-416f-9802-e648aae46790'}
+    _payload = {'add_fin_file': False, 'callback_timeout': 200, 'encoding': 'utf-8', 'ftp_timeout': None,
+                'gcs_bucket': 'workflow-demo-01-20-private-disposable-1m', 'gcs_file_name': None,
+                'gcs_folders': ['__test'], 'keep_file_on_ftp': True, 'source_file_name': None,
+                'source_file_name_re': '^frag.*tellung', 'source_folder': '/gcp-workflows/',
+                'source_ftp': 'my_test_ftp',
+                'workflow_callback_url': 'https://workflowexecutions.googleapis.com/v1/projects/316496625320/locations/europe-west6/workflows/ftp_to_gcs/executions/fc51d350-9e0c-4dd2-a17e-f7a18cd36025/callbacks/50702b45-2c38-42e7-9daa-06acd8fa0316_f56d91fc-0431-44a3-9be0-17d2175459bc'}
     data = dumps(_payload).encode('utf-8')
     _context = Context(eventId="12456646", timestamp="irrelevant", eventType="test", resource="none")
 
