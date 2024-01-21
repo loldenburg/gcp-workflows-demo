@@ -161,9 +161,9 @@ def run_script(**kwargs):
 
 
 if __name__ == '__main__':
-    run_script(payload={"source_ftp": "my_test_ftp",
-                        "gcs_bucket": cfg.GCS_DEFAULT_BUCKET,
-                        "source_folder": "/gcp-workflows/",
-                        "source_file_name_re": "fragestellung",
-                        "gcs_folders": ["__test"],
-                        "keep_file_on_ftp": True})
+    run_script(payload={'add_fin_file': False, 'callback_timeout': 540, 'encoding': 'utf-8', 'ftp_timeout': None,
+                        'gcs_bucket': 'workflow-demo-01-20-private-disposable-1m', 'gcs_file_name': None,
+                        'gcs_folders': ['__test'], 'keep_file_on_ftp': True, 'script': 'ftp_to_gcs',
+                        'source_file_name': None, 'source_file_name_re': '^frag.*tellung',
+                        'source_folder': '/gcp-workflows/', 'source_ftp': 'my_test_ftp',
+                        'workflow_callback_url': 'https://workflowexecutions.googleapis.com/v1/projects/316496625320/locations/europe-west6/workflows/ftp_to_gcs/executions/e397a3fe-457c-47a5-977e-570d8d9f8d2d/callbacks/f82ec947-e44a-4f6b-b0ca-8eb42b96033c_679db4cd-f48c-4339-b0a9-90d07a5bf9d8'})

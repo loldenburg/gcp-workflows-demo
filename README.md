@@ -37,8 +37,13 @@ _(Note to Lukas: see git-ignored ftp_login.txt in root of this repo)_
 
 ### Do some Code Changes:
 
-In `gcf_src/config/cfg.py`:
+In `cloudbuild.yaml`, change the Service Account to the one you want to use:
 
+```yaml
+_SERVICE_ACCOUNT: "1234567890-compute@developer.gserviceaccount.com"  # todo change to the actually intended account
+```
+
+In `gcf_src/config/cfg.py`:
 ```
 GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-project") # todo change to actual project ID
 ```
@@ -82,15 +87,16 @@ gcloud beta builds submit --config cloudbuild.yaml
 ```json
 {
   "import_cfg": {
+    "gcs_bucket": "{{YOUR_PROJECT_ID}}-private-disposable-1m",
     "gcs_folders": [
       "__test"
     ],
     "keep_file_on_ftp": true,
     "source_file_name_re": "^frag.*tellung",
     "source_folder": "/gcp-workflows/",
-    "source_ftp": "my_test_ftp",
-    "gcs_bucket": "{{YOUR_PROJECT_ID}}-private-disposable-1m"
-  }
+    "source_ftp": "my_test_ftp"
+  },
+  "timeout": 10
 }
 ```
 

@@ -10,9 +10,8 @@ def run(event_payload):
     print("in script_runner: checking event payload for JSON or string")
     script_result = None
     try:
-
         event_payload = json.loads(event_payload)
-
+        print(f"Transformed event payload JSON to dict: {event_payload}")
         script = event_payload.get('script')
 
         cfg.SCRIPT = script
