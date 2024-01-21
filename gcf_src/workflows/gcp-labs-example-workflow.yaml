@@ -1,0 +1,35 @@
+- randomgenFunction:
+    call: http.get
+    args:
+      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
+    result: randomgenResult
+- logRandomgenResult:
+    call: sys.log
+    args:
+      severity: "INFO"
+      text: ${"Received random number " + randomgenResult.body.random +" from randomgenFunction. Will now multiply that by 2."}
+- multiplyFunction:
+    call: http.post
+    args:
+      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
+      body:
+        input: ${randomgenResult.body.random}
+    result: multiplyResult
+- logarithmFunction:
+    call: http.get
+    args:
+      url: https://api.mathjs.org/v4/
+      query:
+        expr: ${"log(" + string(multiplyResult.body.multiplied) + ")"} # natural logarithm (ln) of the multiplied number
+    result: logarithmResult
+- floorFunction:
+    call: http.post
+    args:
+      url: https://floor-xxxxxxxx-uc.a.run.app # replace by your actual Cloud Run Service URL
+      auth:
+        type: OIDC
+      body:
+        input: ${logarithmResult.body}
+    result: floorResult
+- returnResult:
+    return: ${floorResult}

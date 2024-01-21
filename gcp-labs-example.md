@@ -140,19 +140,19 @@ If `us-central1` is not your default region, replace it with your region.
 - randomgenFunction:
     call: http.get
     args:
-        url: https://us-central1-workflow-demo-12-16.cloudfunctions.net/randomgen
+      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
     result: randomgenResult
-- log_randomgenResult:
+- logRandomgenResult:
     call: sys.log
     args:
       severity: "INFO"
-      text: ${"Received random number " + randomgenResult.body.random}
+      text: ${"Received random number " + randomgenResult.body.random +" from randomgenFunction. Will now multiply that by 2."}
 - multiplyFunction:
     call: http.post
     args:
-        url: https://us-central1-workflow-demo-12-16.cloudfunctions.net/multiply
-        body:
-            input: ${randomgenResult.body.random}
+      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
+      body:
+        input: ${randomgenResult.body.random}
     result: multiplyResult
 - returnResult:
     return: ${multiplyResult}
@@ -201,7 +201,7 @@ Our new workflow source should look like this:
 - randomgenFunction:
     call: http.get
     args:
-        url: https://us-central1-workflow-demo-12-16.cloudfunctions.net/randomgen # instead of us-central1-workflow-demo-12-16, use your {region-projectID}  
+      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
     result: randomgenResult
 - logRandomgenResult:
     call: sys.log
@@ -211,22 +211,22 @@ Our new workflow source should look like this:
 - multiplyFunction:
     call: http.post
     args:
-        url: https://us-central1-workflow-demo-12-16.cloudfunctions.net/multiply # instead of us-central1-workflow-demo-12-16, use your {region-projectID}
-        body:
-            input: ${randomgenResult.body.random}
-    result: multiplyResult
+      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
+      body:
+        input: ${randomgenResult.body.random}
 - logarithmFunction:
     call: http.get
     args:
-        url: https://api.mathjs.org/v4/
-        query:
-            expr: ${"log(" + string(multiplyResult.body.multiplied) + ")"} # natural logarithm (ln) of the multiplied number
+      url: https://api.mathjs.org/v4/
+      query:
+        expr: ${"log(" + string(multiplyResult.body.multiplied) + ")"} # natural logarithm (ln) of the multiplied number
     result: logarithmResult
 - returnResult:
     return: ${logarithmResult}
 ```
 
-From here on, it gets rather complex and you'll need some Cloud Run and Docker knowledge. Continue if you really want to.
+From here on, it gets a bit more complex, and you'll need some Cloud Run and Docker knowledge. Continue if you really
+want to.
 
 ## Deploy a Cloud Run Service
 
@@ -309,7 +309,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --no-allow-unauthenticated
 ```
 
-Make sure to **copy the Service URL**, e.g. Service URL: https://floor-55xvrbnnwa-uc.a.run.app
+Make sure to **copy the Service URL**, e.g. Service URL: https://floor-xxxxxxx-uc.a.run.app
 Once deployed, the service is ready for the workflow.
 
 ## Connect the Cloud Run service
@@ -343,7 +343,7 @@ Make sure you replace the url values with the actual urls of your functions as w
 - randomgenFunction:
     call: http.get
     args:
-      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}  
+      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
     result: randomgenResult
 - logRandomgenResult:
     call: sys.log
@@ -354,24 +354,24 @@ Make sure you replace the url values with the actual urls of your functions as w
     call: http.post
     args:
       url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
-        body:
-            input: ${randomgenResult.body.random}
+      body:
+        input: ${randomgenResult.body.random}
     result: multiplyResult
 - logarithmFunction:
     call: http.get
     args:
-        url: https://api.mathjs.org/v4/
-        query:
-            expr: ${"log(" + string(multiplyResult.body.multiplied) + ")"} # natural logarithm (ln) of the multiplied number
+      url: https://api.mathjs.org/v4/
+      query:
+        expr: ${"log(" + string(multiplyResult.body.multiplied) + ")"} # natural logarithm (ln) of the multiplied number
     result: logarithmResult
 - floorFunction:
     call: http.post
     args:
-      url: https://floor-55xvrbnnwa-uc.a.run.app # replace by your actual Cloud Run Service URL
-        auth:
-            type: OIDC
-        body:
-            input: ${logarithmResult.body}
+      url: https://floor-xxxxxxxx-uc.a.run.app # replace by your actual Cloud Run Service URL
+      auth:
+        type: OIDC
+      body:
+        input: ${logarithmResult.body}
     result: floorResult
 - returnResult:
     return: ${floorResult}
