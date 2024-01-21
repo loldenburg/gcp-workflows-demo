@@ -1,6 +1,6 @@
 def run_script(**kwargs):
     print("Hello Dr. Stade!")
-    return {"result": "done", "workflow_instructions": {"instruction1": "do-this-next-please"}}
+    return {"result": "done", "workflow_instructions": {"retry": "false", "exit": True}}
 
 
 if __name__ == '__main__':

@@ -6,7 +6,7 @@ access if you can't see them).
 
 ## Run the GCP Labs example
 
-See gcp-s-example.md
+See gcp-labs-example.md
 
 In the project we just created for the GCP Labs example, we will do the following steps:
 
@@ -23,8 +23,17 @@ In the project we just created for the GCP Labs example, we will do the followin
 - Enable Secret Mgr API
 - Create a Secret called `my_test_ftp` in Secret Manager.
 - Secret Content: A JSON with the FTP credentials in the following syntax, example:
-  `{"address":"myftp.mydomain.com","user":"myusername","passwd":"mypassword","ftp_folder":"/"}`
-  (Note to Lukas: see git-ignored ftp_login.txt in root of this repo)
+
+```json
+{
+  "address": "myftp.mydomain.com",
+  "user": "myusername",
+  "passwd": "mypassword",
+  "ftp_folder": "/"
+}
+```
+
+_(Note to Lukas: see git-ignored ftp_login.txt in root of this repo)_
 
 ### Do some Code Changes:
 
