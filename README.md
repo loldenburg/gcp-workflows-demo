@@ -35,13 +35,16 @@ In the project we just created for the GCP Labs example, we will do the followin
 
 _(Note to Lukas: see git-ignored ftp_login.txt in root of this repo)_
 
-### Do some Code Changes:
+### Do some Code and Rights Changes:
 
 In `cloudbuild.yaml`, change the Service Account to the one you want to use:
 
 ```yaml
 _SERVICE_ACCOUNT: "1234567890-compute@developer.gserviceaccount.com"  # todo change to the actually intended account
 ```
+
+- To speed up the demo, we use the default service account. We need to give it **"Secret Manager Secret Accessor"
+  permission** under IAM & Admin.
 
 In `gcf_src/config/cfg.py`:
 ```
@@ -50,9 +53,7 @@ GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-project") # todo change 
 
 ### Create Cloud Function via Cloud Build
 
-Create a Cloud Function via Cloud Build (cloudbuild.yaml) and deploy it to Cloud Run.
-Cloud Build -> Settings -> Enable permissions:
-
+Go to Cloud Build -> Settings -> Enable permissions:
 - Cloud Functions Developer
 - Cloud Run Admin
 - Service Account User
@@ -60,7 +61,7 @@ Cloud Build -> Settings -> Enable permissions:
 #### Build via Cloud Build:
 
 ```bash
-gcloud set project !!THEPROJECTID!! # switch to your project
+gcloud config set project !!THEPROJECTID!! # switch to your project
 ```
 
 Classic command:
@@ -80,8 +81,6 @@ gcloud beta builds submit --config cloudbuild.yaml
 - name: ftp_to_gcs
 - region: europe-west6 (Zürich), everything else default
 - Workflow Editor Source Code -> copy from `workflows/workflow.yaml`
-- To speed up the demo, we use the default service account. We need to give it **"Secret Manager Secret Accessor"
-  permission** under IAM & Admin.
 - Test the workflow with this payload (this will of course fail because you don't have access to my FTP server):
 
 ```json
@@ -95,7 +94,7 @@ gcloud beta builds submit --config cloudbuild.yaml
     "source_file_name_re": "^frag.*tellung",
     "source_folder": "/gcp-workflows/",
     "source_ftp": "my_test_ftp",
-    "callback_timeout": 10,
+    "callback_timeout": 10
   }
 }
 ```

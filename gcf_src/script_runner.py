@@ -7,7 +7,7 @@ from gcf_src.workflows.helpers import workflow_callback_after_run
 def run(event_payload):
     """Runs the script with the supplied `event_payload` from pubsub."""
 
-    print("in script_runner: checking event payload for JSON or string")
+    print("in script_runner: checking event payload for valid JSON")
     script_result = None
     try:
         event_payload = json.loads(event_payload)
