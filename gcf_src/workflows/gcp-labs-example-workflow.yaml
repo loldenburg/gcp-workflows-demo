@@ -1,7 +1,11 @@
+- getRegionAndProject:
+    assign:
+      - region: ${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+      - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
 - randomgenFunction:
     call: http.get
     args:
-      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/randomgen"}
     result: randomgenResult
 - logRandomgenResult:
     call: sys.log
@@ -11,7 +15,7 @@
 - multiplyFunction:
     call: http.post
     args:
-      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/multiply"}
       body:
         input: ${randomgenResult.body.random}
     result: multiplyResult

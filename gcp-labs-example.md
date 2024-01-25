@@ -6,7 +6,14 @@ Slightly modified and corrected version of https://codelabs.developers.google.co
 Create a new GCP project.
 
 ## Enable APIs
-Open Cloud Shell. Enable all necessary services, e.g. via Cloud Shell:
+
+Open Cloud Shell. Make sure you are in the correct project, otherwise run:
+
+```bash
+gcloud config set project <your-project-id>
+```
+
+Enable all necessary services, e.g. via Cloud Shell:
 
 ```bash
 gcloud services enable \
@@ -134,13 +141,16 @@ The second function is ready for the workflow.
 In the first workflow, connect the two functions together.
 
 Create a workflow.yaml file in the root folder with the following contents.
-If `us-central1` is not your default region, replace it with your region.
 
 ```yaml
+- getRegionAndProject:
+    assign:
+      - region: ${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+      - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
 - randomgenFunction:
     call: http.get
     args:
-      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/randomgen"}
     result: randomgenResult
 - logRandomgenResult:
     call: sys.log
@@ -150,7 +160,7 @@ If `us-central1` is not your default region, replace it with your region.
 - multiplyFunction:
     call: http.post
     args:
-      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/multiply"}
       body:
         input: ${randomgenResult.body.random}
     result: multiplyResult
@@ -198,10 +208,14 @@ This time, you will use Cloud Console to update our workflow. Search for "Workfl
 Our new workflow source should look like this:
 
 ```yaml
+- getRegionAndProject:
+    assign:
+      - region: ${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+      - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
 - randomgenFunction:
     call: http.get
     args:
-      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/randomgen"}
     result: randomgenResult
 - logRandomgenResult:
     call: sys.log
@@ -211,9 +225,10 @@ Our new workflow source should look like this:
 - multiplyFunction:
     call: http.post
     args:
-      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/multiply"}
       body:
         input: ${randomgenResult.body.random}
+    result: multiplyResult
 - logarithmFunction:
     call: http.get
     args:
@@ -340,10 +355,14 @@ auth field to make sure Workflows passes in the authentication token in its call
 Make sure you replace the url values with the actual urls of your functions as well as the Cloud Run Service URL.
 
 ```yaml
+- getRegionAndProject:
+    assign:
+      - region: ${sys.get_env("GOOGLE_CLOUD_LOCATION")}
+      - project: ${sys.get_env("GOOGLE_CLOUD_PROJECT_ID")}
 - randomgenFunction:
     call: http.get
     args:
-      url: https://{region-projectID}.cloudfunctions.net/randomgen # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/randomgen"}
     result: randomgenResult
 - logRandomgenResult:
     call: sys.log
@@ -353,7 +372,7 @@ Make sure you replace the url values with the actual urls of your functions as w
 - multiplyFunction:
     call: http.post
     args:
-      url: https://{region-projectID}.cloudfunctions.net/multiply # replace by your {region-projectID}
+      url: ${"https://" + region + "-" + project + ".cloudfunctions.net/multiply"}
       body:
         input: ${randomgenResult.body.random}
     result: multiplyResult
