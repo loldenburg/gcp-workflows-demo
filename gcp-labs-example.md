@@ -13,7 +13,7 @@ Open Cloud Shell. Make sure you are in the correct project, otherwise run:
 gcloud config set project <your-project-id>
 ```
 
-Enable all necessary services, e.g. via Cloud Shell:
+Enable all necessary services:
 
 ```bash
 gcloud services enable \
