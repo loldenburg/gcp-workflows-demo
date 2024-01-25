@@ -157,7 +157,7 @@ def run_script(**kwargs):
                               ftp_folder=source_folder, file_encoding=encoding)
             print(f"Uploaded fin file {finfile_name} to FTP")
 
-    return {"result": "done", "workflow_instructions": {"gcs_locations": gcs_locations}}
+    return {"result": "done", "gcs_locations": gcs_locations}
 
 
 if __name__ == '__main__':

@@ -30,8 +30,8 @@ def main_handler(event: Dict, context: Context):
 if __name__ == "__main__":
     from json import dumps
 
-    _payload = {'script': 'example_script',
-                'workflow_callback_url': "https://www.google.com/your-workflow-callback-url"}
+    _payload = {"script": "example_script",
+                "workflow_callback_url": "https://www.google.com/your-workflow-callback-url"}
     # _payload = {'add_fin_file': False, 'callback_timeout': 200, 'encoding': 'utf-8', 'ftp_timeout': None,
     #             'gcs_bucket': 'workflow-demo-01-20-private-disposable-1m', 'gcs_file_name': None,
     #             'gcs_folders': ['__test'], 'keep_file_on_ftp': True, 'source_file_name': None,
