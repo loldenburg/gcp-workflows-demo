@@ -46,7 +46,7 @@ _SERVICE_ACCOUNT: "1234567890-compute@developer.gserviceaccount.com"  # todo cha
 - To speed up the demo, we use the default service account. We need to give it **"Secret Manager Secret Accessor"
   permission** under IAM & Admin.
 
-In `gcf_src/config/cfg.py`:
+- In `gcf_src/config/cfg.py`:
 ```
 GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-project") # todo change to actual project ID
 ```
@@ -80,7 +80,7 @@ gcloud beta builds submit --config cloudbuild.yaml
 
 - name: ftp_to_gcs
 - region: europe-west6 (Zürich), everything else default
-- Workflow Editor Source Code -> copy from `workflows/workflow.yaml`
+- Workflow Editor Source Code -> copy from `workflows/ftp-to-gcs.yaml`
 - Test the workflow with this payload (this will of course fail because you don't have access to my FTP server):
 
 ```json
