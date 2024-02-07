@@ -48,7 +48,7 @@ _SERVICE_ACCOUNT: "1234567890-compute@developer.gserviceaccount.com"  # todo cha
 
 - In `gcf_src/config/cfg.py`:
 ```
-GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-project") # todo change to actual project ID
+GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-project") # todo change to actual project ID to enable local runs
 ```
 
 ### Create Cloud Function via Cloud Build
