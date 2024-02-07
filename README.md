@@ -18,7 +18,7 @@ In the project we just created for the GCP Labs example, we will do the followin
 - Choose europe-west6 (Zürich) as location
 - Lifecycle policy (after creation): 1 month
 
-### Create a Secret Manager Secret "ftp_passwd"
+### Create a Secret Manager Secret "my_test_ftp"
 
 - Enable Secret Mgr API
 - Create a Secret called `my_test_ftp` in Secret Manager.
