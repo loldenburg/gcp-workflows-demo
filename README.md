@@ -38,7 +38,7 @@ Then clone this repository as a new project in your local IDE (ideally PyCharm).
 
 ### Create a Secret Manager Secret "my_test_ftp"
 
-- Enable Secret Mgr API
+- Enable Secret Mgr API if not enabled yet.
 - Create a Secret called `my_test_ftp` in Secret Manager.
 - Secret Content: A JSON with the FTP credentials in the following syntax, example:
 
@@ -81,29 +81,36 @@ Go to Cloud Build -> Settings -> Enable permissions:
 
 #### Build via Cloud Build:
 
-In your IDE, open a terminal from the root folder of this repository. Then run:
+For this, you need to have [Google Cloud SDK](https://cloud.google.com/sdk/docs/downloads-interactive) installed.
+
+In your IDE (recommmended: PyCharm), open a terminal from the root folder of this repository.
+
+First, authenticate:
+
+```bash
+gcloud auth login --update-adc
+```
+
+You are taken to a browser window where you can log in with your Google account.
+
+Then, set the project:
 
 ```bash
 gcloud config set project !!THEPROJECTID!! # switch to your project
 ```
 
-Classic command:
+Now, we can build the Cloud Function from the instructions in cloudbuild.yaml with the following command:
 
 ```bash
 gcloud builds submit --config cloudbuild.yaml --no-gen2 
 ```
 
-Or: With logs and gcloud beta components installed:
+(if it fails, remove the `--no-gen2` parameter)
 
-```bash
-gcloud beta builds submit --config cloudbuild.yaml --no-gen2 
-```
+It takes 2-3 minutes to build and deploy the Cloud Function. After building, you can see the Cloud Function in the Cloud
+Console (=cloud.google.com website) under "Cloud Functions".
 
-If you run into trouble, update your credentials with:
-
-```bash
-gcloud auth login --update-adc
-```
+You can also see the related Pub/Sub topic under "Pub/Sub".
 
 ### Create Workflow
 
