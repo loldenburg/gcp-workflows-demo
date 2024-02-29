@@ -22,7 +22,7 @@ substitutions:
   _SERVICE_NAME: "analytical-scripts"
   _REGION: "europe-west6"
   _ENTRY_POINT: "main_handler"
-  _SERVICE_ACCOUNT: "123456789-compute@developer.gserviceaccount.com"  # todo change to the actually intended account
+  _SERVICE_ACCOUNT: "1234567890-compute@developer.gserviceaccount.com"  # todo change to the actually intended account
 
 options:
   logging: 'CLOUD_LOGGING_ONLY'

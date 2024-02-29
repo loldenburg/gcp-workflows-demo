@@ -5,7 +5,7 @@ from google.cloud import secretmanager
 
 WORKFLOW_CALLBACK_URL = 'undefined'
 SCRIPT = 'undefined'
-GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-XXX")  # todo change to actual project ID to enable local runs
+GCP_PROJECT = environ.get("GCP_PROJECT", "workflow-demo-02-28")  # todo change to actual project ID to enable local runs
 GCS_DEFAULT_BUCKET = environ.get("GCS_DEFAULT_BUCKET", f"{GCP_PROJECT}-private-disposable-1m")
 
 

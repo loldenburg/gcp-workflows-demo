@@ -7,9 +7,9 @@ main:
         args:
           severity: "INFO"
           text: ${"Starting FTP to GCS Workflow with payload " + json.encode_to_string(input)}
-    - set_core_vars: # need those here to access them as global vars in sub-workflows
+    - set_core_vars: # need those here to access them as global vars later
         assign:
-          - attempt: 1 # workflow will restart itself up to {max_attempts} attempts
+          - attempt: 1 # workflow will attempt the import up to {max_attempts} attempts
           - max_attempts: ${default(map.get(input, "max_attempts"), 3)}
           - next_pubsub_payloads: ${default(map.get(input, "next_pubsub_payloads"), null)} # list of objects with next pubsub payloads to trigger - OPTIONAL, defaults to null => workflow will end after import
           - import_cfg: ${input["import_cfg"]} # import config - MANDATORY
@@ -17,7 +17,7 @@ main:
     - set_fallback_cfg_vars:
         assign: # if variables are not provided in the input payload, we will use these fallback values:
           - fallback_cfg: # this is the payload we will send to the cloud function via the Pubsub message
-              callback_timeout: ${default(map.get(import_cfg, "callback_timeout"), 540)} # timeout for callback (=for waiting for import cloud function result) - OPTIONAL, defaults to 540 seconds
+              callback_timeout: ${default(map.get(import_cfg, "callback_timeout"), 560)} # timeout for callback (=for waiting for import cloud function result) - OPTIONAL, defaults to 560 seconds
               encoding: ${default(map.get(import_cfg, "encoding"), "utf-8")} # encoding of the file to import (eg. "utf-8") - OPTIONAL, defaults to "utf-8"
               ftp_timeout: ${default(map.get(import_cfg, "ftp_timeout"), null)} # timeout for FTP - OPTIONAL, defaults to null (default FTP lib timeout setting will be used)
               gcs_bucket: ${default(map.get(import_cfg, "gcs_bucket"), null)}  # GCS bucket to import to - OPTIONAL, defaults to default bucket in Cloud Function
@@ -69,6 +69,9 @@ main:
             assign:
               - callback_payload: ${default(map.get(callback_result.http_request, "body"), null)}
               - workflow_instructions: ${default(map.get(callback_payload, "workflow_instructions"), null)}
+          - condition: true # default condition (we have a timeout error = callback_result is already properly formatted)
+            assign:
+              - callback_payload: ${callback_result}
     - decide_next_step_based_on_callback_payload:
         switch:
           # if callback payload contains a "result" property with value = "error", it failed => we will retry if we haven't reached max_attempts yet:
