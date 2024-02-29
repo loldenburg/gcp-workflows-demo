@@ -6,11 +6,14 @@ access if you can't see them).
 
 ## Set up GCP Project and enable APIs
 
-Option 1.
+**Option 1:**
 Run
 the [GCP Labs example in this same repo](https://github.com/loldenburg/gcp-workflows-demo/blob/master/gcp-labs-example.md).
 
-Option 2. Open Cloud Shell and enable the necessary APIs with the code below:
+**Option 2:**
+Create a new Google Cloud Project and switch to it.
+
+Then open Cloud Shell and enable the necessary APIs with the code below:
 
 ```bash
 gcloud services enable \
