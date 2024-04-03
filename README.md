@@ -1,8 +1,13 @@
 # GCP Workflows Demo
 
-by Lukas Oldenburg, dim28.ch. Part of the Analytics Pioneers demo session in January-April 2024.
-Accompanying slides are at https://docs.google.com/presentation/d/11sxK1XKof-yF7wjrN5VFRlk5GBTr9NgFaSdINvjDH1Y (ask for
-access if you can't see them).
+* by Lukas Oldenburg, dim28.ch. Part of the Analytics Pioneers demo session in January-April 2024.
+* [**Accompanying article
+  **](https://thebounce.io/use-gcp-workflows-to-secure-an-ftp-to-google-cloud-storage-data-flow-19487635c380)
+* [**Accompanying slides
+  **](https://gitlab.com/mstade81/analytics-pioneers-community-trainings/-/blob/main/DE%202024.03.01_GCP%20Workflows%20-%20Teil%202/DE_2024.03.01_GCP_Workflows_-_Teil_2.pdf)
+* [**Video Part 1**](https://youtu.be/NIFLJ56qIMs)
+* [**Video Part 2**](https://youtu.be/5zzwh4LcmO8)
+
 
 ## Set up GCP Project and enable APIs
 
